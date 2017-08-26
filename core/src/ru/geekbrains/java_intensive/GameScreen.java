@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.StringBuilder;
 
 import java.util.ArrayList;
 
@@ -17,6 +18,7 @@ import ru.geekbrains.java_intensive.asteroids.Asteroid;
 class GameScreen implements Screen, InputProcessor {
 
     private static final float ASTEROID_VY_PERCENT = 0.3f;
+    private static final String STR_SCORE = "Score: ";
 
     private SpriteBatch batch;
     private Texture textureBackground;
@@ -27,6 +29,7 @@ class GameScreen implements Screen, InputProcessor {
     private float worldHeight;
     private float worldWidth;
     private BitmapFont font;
+    private int score;
 
     @Override
     public void show() {
@@ -48,6 +51,7 @@ class GameScreen implements Screen, InputProcessor {
     }
 
     void startNewGame() {
+        score = 0;
         asteroids.clear();
         addNewAsteroid();
     }
@@ -77,13 +81,19 @@ class GameScreen implements Screen, InputProcessor {
 
     }
 
+    private final StringBuilder sbScore = new StringBuilder();
+
     private void draw() {
         Gdx.gl.glClearColor(0.3f, 0.3f, 0.3f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         batch.draw(textureBackground, 0, 0);
         for (int i = 0; i < asteroids.size(); i++) asteroids.get(i).draw(batch);
-        font.draw(batch, "Hello World", 0, worldHeight - 1);
+
+        sbScore.setLength(0);
+        sbScore.append(STR_SCORE);
+        sbScore.append(score);
+        font.draw(batch, sbScore, 0, worldHeight - 1);
         batch.end();
     }
 
@@ -132,6 +142,7 @@ class GameScreen implements Screen, InputProcessor {
         touch.set(screenX, worldHeight - screenY - 1);
         for (int i = asteroids.size() - 1; i >= 0; i--) {
             if(asteroids.get(i).touchDown(touch)) {
+                score++;
                 break;
             }
         }
