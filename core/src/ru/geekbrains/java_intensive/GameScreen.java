@@ -5,6 +5,11 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+import java.util.ArrayList;
+
+import ru.geekbrains.java_intensive.asteroids.Asteroid;
 
 class GameScreen implements Screen {
 
@@ -12,6 +17,8 @@ class GameScreen implements Screen {
     private Texture textureBackground;
     private Texture textureAsteroid;
     private Texture textureBtnNewGame;
+    private TextureRegion regionAsteroid;
+    private final ArrayList<Asteroid> asteroids = new ArrayList<Asteroid>();
 
     @Override
     public void show() {
@@ -19,6 +26,8 @@ class GameScreen implements Screen {
         textureBackground = new Texture("textures/background.png");
         textureAsteroid = new Texture("textures/asteroid_1.png");
         textureBtnNewGame = new Texture("textures/btn_new_game.png");
+        regionAsteroid = new TextureRegion(textureAsteroid);
+        asteroids.add(new Asteroid(regionAsteroid));
     }
 
     @Override
@@ -41,6 +50,9 @@ class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         batch.draw(textureBackground, 0, 0);
+        for (int i = 0; i < asteroids.size(); i++) {
+            asteroids.get(i).draw(batch);
+        }
         batch.end();
     }
 

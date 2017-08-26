@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class Sprite extends Rect {
 
     private TextureRegion textureRegion;
-    private float angle;
+    protected float angle;
 
     public Sprite(TextureRegion textureRegion) {
         this.textureRegion = textureRegion;
