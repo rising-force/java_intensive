@@ -24,6 +24,14 @@ public class Asteroid extends Sprite {
         moveUp();
     }
 
+    public boolean touchDown(Vector2 touch) {
+        if(isMe(touch)) {
+            moveUp();
+            return true;
+        }
+        return false;
+    }
+
     public void update(float deltaTime) {
         pos.mulAdd(v, deltaTime);
         angle += w * deltaTime;

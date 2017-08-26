@@ -1,17 +1,19 @@
 package ru.geekbrains.java_intensive;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 
 import ru.geekbrains.java_intensive.asteroids.Asteroid;
 
-class GameScreen implements Screen {
+class GameScreen implements Screen, InputProcessor {
 
     private static final float ASTEROID_VY_PERCENT = 0.3f;
 
@@ -28,6 +30,7 @@ class GameScreen implements Screen {
     public void show() {
         worldWidth = Gdx.graphics.getWidth();
         worldHeight = Gdx.graphics.getHeight();
+        Gdx.input.setInputProcessor(this);
         batch = new SpriteBatch();
         textureBackground = new Texture("textures/background.png");
         textureAsteroid = new Texture("textures/asteroid_1.png");
@@ -52,7 +55,15 @@ class GameScreen implements Screen {
         draw();
     }
 
+    private float addAsteroidInterval = 10f;
+    private float addAsteroidTimer;
+
     private void update(float deltaTime) {
+        addAsteroidTimer += deltaTime;
+        if(addAsteroidTimer >= addAsteroidInterval) {
+            addAsteroidTimer = 0f;
+            addNewAsteroid();
+        }
         for (int i = 0; i < asteroids.size(); i++) {
             asteroids.get(i).update(deltaTime);
         }
@@ -92,5 +103,54 @@ class GameScreen implements Screen {
         textureBackground.dispose();
         textureAsteroid.dispose();
         textureBtnNewGame.dispose();
+    }
+
+
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    private final Vector2 touch = new Vector2();
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        touch.set(screenX, worldHeight - screenY - 1);
+        for (int i = asteroids.size() - 1; i >= 0; i--) {
+            if(asteroids.get(i).touchDown(touch)) {
+                break;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
     }
 }
