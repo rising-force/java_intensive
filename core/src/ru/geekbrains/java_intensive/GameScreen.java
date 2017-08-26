@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -25,6 +26,7 @@ class GameScreen implements Screen, InputProcessor {
     private final ArrayList<Asteroid> asteroids = new ArrayList<Asteroid>();
     private float worldHeight;
     private float worldWidth;
+    private BitmapFont font;
 
     @Override
     public void show() {
@@ -36,6 +38,8 @@ class GameScreen implements Screen, InputProcessor {
         textureAsteroid = new Texture("textures/asteroid_1.png");
         textureBtnNewGame = new Texture("textures/btn_new_game.png");
         regionAsteroid = new TextureRegion(textureAsteroid);
+
+        font = new BitmapFont(Gdx.files.internal("font/font.fnt"), Gdx.files.internal("font/font.png"), false, true);
         startNewGame();
     }
 
@@ -78,9 +82,8 @@ class GameScreen implements Screen, InputProcessor {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         batch.draw(textureBackground, 0, 0);
-        for (int i = 0; i < asteroids.size(); i++) {
-            asteroids.get(i).draw(batch);
-        }
+        for (int i = 0; i < asteroids.size(); i++) asteroids.get(i).draw(batch);
+        font.draw(batch, "Hello World", 0, worldHeight - 1);
         batch.end();
     }
 
@@ -103,6 +106,7 @@ class GameScreen implements Screen, InputProcessor {
         textureBackground.dispose();
         textureAsteroid.dispose();
         textureBtnNewGame.dispose();
+        font.dispose();
     }
 
 
