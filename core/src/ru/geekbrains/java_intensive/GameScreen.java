@@ -13,21 +13,36 @@ import ru.geekbrains.java_intensive.asteroids.Asteroid;
 
 class GameScreen implements Screen {
 
+    private static final float ASTEROID_VY_PERCENT = 0.3f;
+
     private SpriteBatch batch;
     private Texture textureBackground;
     private Texture textureAsteroid;
     private Texture textureBtnNewGame;
     private TextureRegion regionAsteroid;
     private final ArrayList<Asteroid> asteroids = new ArrayList<Asteroid>();
+    private float worldHeight;
+    private float worldWidth;
 
     @Override
     public void show() {
+        worldWidth = Gdx.graphics.getWidth();
+        worldHeight = Gdx.graphics.getHeight();
         batch = new SpriteBatch();
         textureBackground = new Texture("textures/background.png");
         textureAsteroid = new Texture("textures/asteroid_1.png");
         textureBtnNewGame = new Texture("textures/btn_new_game.png");
         regionAsteroid = new TextureRegion(textureAsteroid);
-        asteroids.add(new Asteroid(regionAsteroid));
+        startNewGame();
+    }
+
+    private void addNewAsteroid(){
+        asteroids.add(new Asteroid(regionAsteroid, -ASTEROID_VY_PERCENT * worldHeight, worldHeight - 1, worldWidth - 1));
+    }
+
+    void startNewGame() {
+        asteroids.clear();
+        addNewAsteroid();
     }
 
     @Override
@@ -38,7 +53,9 @@ class GameScreen implements Screen {
     }
 
     private void update(float deltaTime) {
-
+        for (int i = 0; i < asteroids.size(); i++) {
+            asteroids.get(i).update(deltaTime);
+        }
     }
 
     private void checkCollision() {
