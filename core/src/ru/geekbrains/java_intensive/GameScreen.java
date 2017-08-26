@@ -20,6 +20,8 @@ class GameScreen implements Screen, InputProcessor {
     private static final float ASTEROID_VY_PERCENT = 0.3f;
     private static final String STR_SCORE = "Score: ";
 
+    private enum State { PLAYING, GAME_OVER }
+    private State state;
     private SpriteBatch batch;
     private Texture textureBackground;
     private Texture textureAsteroid;
@@ -53,6 +55,8 @@ class GameScreen implements Screen, InputProcessor {
     }
 
     void startNewGame() {
+        state = State.PLAYING;
+        addAsteroidTimer = 0f;
         score = 0;
         asteroids.clear();
         addNewAsteroid();
@@ -69,18 +73,20 @@ class GameScreen implements Screen, InputProcessor {
     private float addAsteroidTimer;
 
     private void update(float deltaTime) {
-        addAsteroidTimer += deltaTime;
-        if(addAsteroidTimer >= addAsteroidInterval) {
-            addAsteroidTimer = 0f;
-            addNewAsteroid();
-        }
-        for (int i = 0; i < asteroids.size(); i++) {
-            asteroids.get(i).update(deltaTime);
+        if(state == State.PLAYING) {
+            addAsteroidTimer += deltaTime;
+            if (addAsteroidTimer >= addAsteroidInterval) {
+                addAsteroidTimer = 0f;
+                addNewAsteroid();
+            }
+            for (int i = 0; i < asteroids.size(); i++) asteroids.get(i).update(deltaTime);
         }
     }
 
     private void checkCollision() {
-
+        for (int i = 0; i < asteroids.size(); i++) {
+            if(asteroids.get(i).getBottom() <= 0f) state = State.GAME_OVER;
+        }
     }
 
     private final StringBuilder sbScore = new StringBuilder();
@@ -96,7 +102,7 @@ class GameScreen implements Screen, InputProcessor {
         sbScore.append(STR_SCORE);
         sbScore.append(score);
         font.draw(batch, sbScore, 0, worldHeight - 1);
-        buttonNewGame.draw(batch);
+        if(state == State.GAME_OVER) buttonNewGame.draw(batch);
         batch.end();
     }
 
@@ -143,13 +149,21 @@ class GameScreen implements Screen, InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touch.set(screenX, worldHeight - screenY - 1);
-        for (int i = asteroids.size() - 1; i >= 0; i--) {
-            if(asteroids.get(i).touchDown(touch)) {
-                score++;
+        switch (state) {
+            case PLAYING:
+                for (int i = asteroids.size() - 1; i >= 0; i--) {
+                    if(asteroids.get(i).touchDown(touch)) {
+                        score++;
+                        break;
+                    }
+                }
                 break;
-            }
+            case GAME_OVER:
+                buttonNewGame.touchDown(touch);
+                break;
+            default:
+                throw new RuntimeException("Unknown state = " + state);
         }
-        buttonNewGame.touchDown(touch);
         return false;
     }
 
