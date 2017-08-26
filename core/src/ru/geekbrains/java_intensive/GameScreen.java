@@ -30,6 +30,7 @@ class GameScreen implements Screen, InputProcessor {
     private float worldWidth;
     private BitmapFont font;
     private int score;
+    private ButtonNewGame buttonNewGame;
 
     @Override
     public void show() {
@@ -43,6 +44,7 @@ class GameScreen implements Screen, InputProcessor {
         regionAsteroid = new TextureRegion(textureAsteroid);
 
         font = new BitmapFont(Gdx.files.internal("font/font.fnt"), Gdx.files.internal("font/font.png"), false, true);
+        buttonNewGame = new ButtonNewGame(new TextureRegion(textureBtnNewGame), this, worldWidth / 2f, worldHeight / 2f);
         startNewGame();
     }
 
@@ -94,6 +96,7 @@ class GameScreen implements Screen, InputProcessor {
         sbScore.append(STR_SCORE);
         sbScore.append(score);
         font.draw(batch, sbScore, 0, worldHeight - 1);
+        buttonNewGame.draw(batch);
         batch.end();
     }
 
@@ -146,6 +149,7 @@ class GameScreen implements Screen, InputProcessor {
                 break;
             }
         }
+        buttonNewGame.touchDown(touch);
         return false;
     }
 
